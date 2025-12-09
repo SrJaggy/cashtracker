@@ -1,53 +1,33 @@
 import { Router } from "express";
 import { BudgetController } from "../controllers/BudgetController";
-import { body, param } from "express-validator";
 import { handleInputErrors } from "../middleware/validation";
+import { validateBudgetExist, validateBudgetId, validateBudgetInput } from '../middleware/Budget';
 
 const router = Router()
 
+router.param('budgetId', validateBudgetId)
+router.param('budgetId', validateBudgetExist)
+
 router.get('/', BudgetController.getAll )
 
-
 router.post('/', 
-    body('name')
-        .notEmpty().withMessage('El nombre del presupuesto no puede estar vacio'),
-    body('amount')
-        .notEmpty().withMessage('La cantidad del presupuesto no puede ir vacia')
-        .isNumeric().withMessage('Cantidad no válida')
-        .custom(value => value > 0).withMessage('El presupuesto debe ser mayor a 0'),
+    validateBudgetInput,
     handleInputErrors,
     BudgetController.create 
 )
 
-router.get('/:id', 
-    param('id')
-        .isInt().withMessage('id no válido')
-        .custom(value => value > 0 ).withMessage('id no válido'),
+router.get('/:budgetId', 
     handleInputErrors,
     BudgetController.getByID 
 )
 
-
-router.put('/:id', 
-    param('id')
-        .isInt().withMessage('id no válido')
-        .custom(value => value > 0 ).withMessage('id no válido'),
-    body('name')
-        .notEmpty().withMessage('El nombre del presupuesto no puede estar vacio'),
-    body('amount')
-        .notEmpty().withMessage('La cantidad del presupuesto no puede ir vacia')
-        .isNumeric().withMessage('Cantidad no válida')
-        .custom(value => value > 0).withMessage('El presupuesto debe ser mayor a 0'),
+router.put('/:budgetId', 
+    validateBudgetInput,
     handleInputErrors,
     BudgetController.updateById
 )
 
-
-
-router.delete('/:id', 
-    param('id')
-        .isInt().withMessage('id no válido')
-        .custom(value => value > 0 ).withMessage('id no válido'),
+router.delete('/:budgetId', 
     handleInputErrors,
     BudgetController.deleteById
 )
