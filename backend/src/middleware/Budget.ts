@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express"
 import { param, validationResult, body } from "express-validator"
 import Budget from '../models/Budget';
+import Expense from "../models/Expense";
 
 declare global {
     namespace Express {
@@ -43,4 +44,21 @@ export const validateBudgetInput = async (req: Request, res: Response, next: Nex
         .custom(value => value > 0).withMessage('El presupuesto debe ser mayor a 0').run(req)
 
     next()
+}
+
+export const validateExpenseExist = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+            const {expenseId} = req.params
+            const expense = await Expense.findByPk(expenseId)
+
+            if(!expense) {
+                const error = new Error('Gasto no encontrado')
+                return res.status(404).json({error: error.message})
+            }
+            req.expense= expense
+            next()
+        } catch (error) {
+            res.status(500).json({error: 'Hubo un error'})
+        }
 }
