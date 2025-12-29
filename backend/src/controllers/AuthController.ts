@@ -4,7 +4,6 @@ import { checkPassword, hashPassword } from '../utils/auth';
 import { generateToken } from "../utils/token";
 import { AuthEmail } from "../emails/AuthEmail";
 import { generateJWT } from "../utils/jwt";
-import { param } from 'express-validator';
 
 
 export class AuthController {
@@ -51,8 +50,6 @@ export class AuthController {
         user.token = null
         await user.save()
         res.json("Cuenta confirmada correctamente")
-
-        res.json(user)
     }
 
     static login = async (req: Request, res: Response) => {
@@ -63,7 +60,7 @@ export class AuthController {
 
         if(!user) {
             const error = new Error('Usuario no encontrado')
-            return res.status(404).json({error: error.message})
+            return res.status(409).json({error: error.message})
         }
 
         if(!user.confirmed) {
@@ -137,4 +134,15 @@ export class AuthController {
         res.json('El password se modifico correctamente')
 
     }
+    static user = async (req: Request, res: Response) => {
+        res.json(req.user)
+
+        
+    }
+
+    static updateCurrentUserPassword = async (req: Request, res: Response) => {
+        res.json('update current user password')
+    }
+
+
 }
