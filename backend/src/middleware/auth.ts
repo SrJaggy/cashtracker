@@ -37,9 +37,8 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
                 req.user = await User.findByPk(decoded.id, {
                     attributes: ['id', 'name', 'email']
                 })
-                next()
+                return next()
             }
-            
 
             res.json(decoded)
         } catch (error) {

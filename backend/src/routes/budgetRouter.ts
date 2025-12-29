@@ -1,16 +1,21 @@
 import { Router } from "express";
 import { BudgetController } from "../controllers/BudgetController";
 import { handleInputErrors } from "../middleware/validation";
-import { validateBudgetExist, validateBudgetId, validateBudgetInput, validateExpenseExist } from "../middleware/Budget";
+import { hasAccess, validateBudgetExist, validateBudgetId, validateBudgetInput, validateExpenseExist } from "../middleware/budget";
 import { ExpensesController } from "../controllers/ExpenseController";
-import { validateExpenseId, validateExpenseInput } from "../middleware/Expense";
+import { validateExpenseId, validateExpenseInput } from "../middleware/expense";
+import { authenticate } from "../middleware/auth";
 
 
 
 const router = Router()
 
+router.use(authenticate)
+
 router.param('budgetId', validateBudgetId)
 router.param('budgetId', validateBudgetExist)
+router.param('budgetId', hasAccess)
+
 router.param('expenseId',validateExpenseId)
 router.param('expenseId',validateExpenseExist)
 
